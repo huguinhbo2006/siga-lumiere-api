@@ -29,4 +29,22 @@ class CuponesController extends BaseController
             return response()->json('Error en el servidor', 400);
         }
     }
+
+    function canjear(Request $request){
+        try {
+            $cupon = Cupone::where('cupon', '=', $request['cupon'])->first();
+            if(is_null($cupon)){
+                return response()->json('Cupon no encontrado', 400);
+            }
+            if(intval($cupon->cantidad) > 0){
+                $cupon->cantidad = intval($cupon->cantidad) - 1;
+                $cupon->save();
+                return response()->json($cupon, 200);
+            }else{
+                return response()->json('El cupon ya ha sido canjeado anteriormente', 400);
+            }
+        } catch (Exception ) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
 }
