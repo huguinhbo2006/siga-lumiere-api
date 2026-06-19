@@ -1,7 +1,7 @@
 <?php
 
 	$router->get('/', function () use ($router) {
-	    return phpinfo();
+	    return response()->json('Hola Mundo', 200);
 	});
 
 	$router->post('token', ['uses' => 'AuthController@postLogin']);
