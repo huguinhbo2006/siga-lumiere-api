@@ -59,7 +59,7 @@ class CreditosController extends Controller
                 'fecha' => Carbon::now()
             ]);
 
-            $egreso = array();
+            $egreso = null;
             if(intval($request['tipo']) === 2){
                 $egreso = Egreso::create([
                     'concepto' => 'Credito',
