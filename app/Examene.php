@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class Examene extends Model implements  AuthenticatableContract, AuthorizableContract
+class Examene extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -27,4 +27,17 @@ class Examene extends Model implements  AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * RELACIONES
+     */
+
+    /**
+     * Un Examen tiene muchos permisos asociados
+     */
+    public function permisos()
+    {
+        // Vincula el examen con sus permisos mediante 'idExamen'
+        return $this->hasMany(ExamenPermiso::class, 'idExamen', 'id');
+    }
 }

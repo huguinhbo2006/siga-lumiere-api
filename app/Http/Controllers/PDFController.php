@@ -314,12 +314,12 @@ class PDFController extends BaseController
 
     function egreso(Request $request){
         try {
-            $egreso = Egreso::join('usuarios', 'egresos.idUsuario', '=', 'usuarios.id')->
-            join('sucursales', 'egresos.idSucursal', '=', 'sucursales.id')->
-            join('empleados', 'usuarios.idEmpleado', '=', 'empleados.id')->
-            join('formaspagos', 'egresos.idFormaPago', '=', 'formaspagos.id')->
-            join('rubrosegresos', 'egresos.idRubro', '=', 'rubrosegresos.id')->
-            join('tiposegresos', 'egresos.idTipo', '=', 'tiposegresos.id')->
+            $egreso = Egreso::leftjoin('usuarios', 'egresos.idUsuario', '=', 'usuarios.id')->
+            leftjoin('sucursales', 'egresos.idSucursal', '=', 'sucursales.id')->
+            leftjoin('empleados', 'usuarios.idEmpleado', '=', 'empleados.id')->
+            leftjoin('formaspagos', 'egresos.idFormaPago', '=', 'formaspagos.id')->
+            leftjoin('rubrosegresos', 'egresos.idRubro', '=', 'rubrosegresos.id')->
+            leftjoin('tiposegresos', 'egresos.idTipo', '=', 'tiposegresos.id')->
             select(
                 'egresos.folio',
                 'egresos.activo',

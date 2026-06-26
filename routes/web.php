@@ -131,4 +131,8 @@
 		include "rutas/configuracionvideo.php";
 		include "rutas/estadocuenta.php";
 		include "rutas/metaseconomicas.php";
+		include "rutas/calificaciones.php";
+		include "rutas/prestadores.php";
+		include "rutas/creditos.php";
+		include "rutas/prestamos.php";
 	});

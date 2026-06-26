@@ -11,6 +11,9 @@ use Carbon\Carbon;
 use App\Sucursale;
 use App\Vale;
 use App\Alumnoabono;
+use App\Calendario;
+use App\Nivele;
+
 
 class Ingreso extends Model implements  AuthenticatableContract, AuthorizableContract
 {
@@ -41,4 +44,50 @@ class Ingreso extends Model implements  AuthenticatableContract, AuthorizableCon
      */
     protected $hidden = [
     ];
+
+    protected $attributes = [
+        'activo' => 1,
+        'eliminado' => 0
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($ingreso) {
+
+            if (is_null($ingreso->activo)) {
+                $ingreso->activo = 1;
+            }
+
+            if (is_null($ingreso->eliminado)) {
+                $ingreso->eliminado = 0;
+            }
+
+            if (empty($ingreso->folio)) {
+
+                $cantidad = self::where('idNivel', $ingreso->idNivel)
+                    ->where('idCalendario', $ingreso->idCalendario)
+                    ->where('idSucursal', $ingreso->idSucursal)
+                    ->count();
+
+                $sucursal = Sucursale::find($ingreso->idSucursal);
+                $calendario = Calendario::find($ingreso->idCalendario);
+                $nivel = Nivele::find($ingreso->idNivel);
+
+                if ($sucursal && $calendario && $nivel) {
+
+                    $separados = explode('-', $calendario->nombre);
+
+                    $ingreso->folio =
+                        substr($separados[0], -2) .
+                        $separados[1] .
+                        substr($nivel->nombre, 0, 1) .
+                        $sucursal->abreviatura .
+                        '-' .
+                        ($cantidad + 1);
+                }
+            }
+        });
+    }
 }

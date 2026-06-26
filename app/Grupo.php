@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class Grupo extends Model implements  AuthenticatableContract, AuthorizableContract
+class Grupo extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -26,6 +26,18 @@ class Grupo extends Model implements  AuthenticatableContract, AuthorizableContr
      *
      * @var array
      */
-    protected $hidden = [
-    ];
+    protected $hidden = [];
+
+    /**
+     * RELACIONES
+     */
+
+    /**
+     * Un Grupo pertenece a una Alta de Curso
+     */
+    public function altaCurso()
+    {
+        // Se conecta usando 'idAltaCurso' como llave foránea
+        return $this->belongsTo(AltaCurso::class, 'idAltaCurso');
+    }
 }
