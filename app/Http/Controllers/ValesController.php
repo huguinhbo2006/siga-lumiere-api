@@ -46,7 +46,8 @@ class ValesController extends BaseController
                 $request['idNivel'],
                 $folios->proximoEgreso($request['idNivel'], $request['idCalendario'], $request['sucursalID']),
                 0,
-                ''
+                '',
+                $request['sucursalID']
             );
 
             $vale = $funciones->crearVale(
