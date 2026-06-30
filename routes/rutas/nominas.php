@@ -15,4 +15,5 @@
 	$router->get('nominas/solicitudes', ['uses' => 'NominasController@solicitudes']);
 	$router->post('nominas/aceptarSolicitud', ['uses' => 'NominasController@aceptarSolicitud']);
 	$router->post('nominas/rechazarSolicitud', ['uses' => 'NominasController@rechazarSolicitud']);
+	$router->post('nominas/cancelar', ['uses' => 'NominasController@cancelar']);
 ?>

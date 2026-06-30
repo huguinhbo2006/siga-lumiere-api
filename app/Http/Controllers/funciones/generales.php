@@ -485,7 +485,7 @@
 
 	function calendarioActual(){
 		try {
-			$consulta = "SELECT id, nombre, inicio, fin FROM calendarios WHERE NOW() BETWEEN inicio AND fin and eliminado = 0 ORDER BY fin desc";
+			$consulta = "SELECT id, nombre, inicio, fin FROM calendarios WHERE CURDATE() BETWEEN DATE(inicio) AND DATE(fin) AND eliminado = 0 ORDER BY fin DESC";
             $registros = DB::select($consulta, array());
             $calendario = array();
             if(count($registros) > 0){

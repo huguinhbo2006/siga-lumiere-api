@@ -20,6 +20,7 @@
 	use App\Conceptospercepcione;
 	use App\Sucursale;
 	use App\Formaspago;
+	use App\Clases\Listas;
 
 	use App\Clases\Folios;
 	use Illuminate\Support\Facades\DB;
@@ -44,6 +45,7 @@
 	                    WHEN(nominas.estatus = 0) THEN 'bg-rojo'
 	                    WHEN(nominas.estatus = 1) THEN 'bg-amarillo'
 	                    WHEN(nominas.estatus = 2) THEN 'bg-verde'
+	                    WHEN(nominas.estatus = 3) THEN 'bg-azul'
 	                    END) AS bg")
 	            )->
 	            where('nominas.idSucursal', '=', $sucursalID)->
@@ -90,19 +92,9 @@
 						);
 					}
 				}
-				return array(
-					'niveles' => Nivele::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'calendarios' => Calendario::where('eliminado', '=', 0)->whereRaw('fin > NOW()')->get(),
-					'departamentos' => Departamento::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'puestos' => Puesto::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'empleados' => Empleado::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'deducciones' => Conceptosdeduccione::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'percepciones' => Conceptospercepcione::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'bancos' => Banco::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'sucursales' => Sucursale::where('eliminado', '=', 0)->get(),
-					'formas' => Formaspago::where('eliminado', '=', 0)->where('activo', '=', 1)->get(),
-					'nominas' => $percepciones
-				);
+				$listas = Listas::listas(['niveles', 'calendarios', 'actuales', 'departamentos', 'puestos', 'empleados', 'deducciones', 'percepciones', 'sucursales', 'formaspagos']);
+				$listas['nominas'] = $percepciones;
+				return $listas;
 			} catch (Exception $e) {
 				return null;
 			}
@@ -537,5 +529,7 @@
 				return null;
 			}
 		}
+
+		
 	}
 ?>

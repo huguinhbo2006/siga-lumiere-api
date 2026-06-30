@@ -302,4 +302,15 @@ class NominasController extends BaseController
             return response()->json('Error en el servidor', 400);
         }
     }
+
+    function cancelar(Request $request){
+        try {
+            $nomina = Nomina::find($request['id']);
+            $nomina->estatus = 3;
+            $nomina->save();
+            return response()->json($nomina, 200);
+        } catch (Exception ) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
 }

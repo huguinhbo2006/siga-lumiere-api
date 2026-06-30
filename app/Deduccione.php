@@ -13,11 +13,20 @@ class Deduccione extends Model implements AuthenticatableContract, AuthorizableC
     use Authenticatable, Authorizable;
 
     protected $fillable = [
-        'updated_at', 'created_at', 'activo', 'eliminado', 'id', 'idConcepto', 'monto', 'idNomina', 'valorUnitario', 'cantidad', 'idFormaPago'
+        'updated_at',
+        'created_at',
+        'activo',
+        'eliminado',
+        'id',
+        'idConcepto',
+        'monto',
+        'idNomina',
+        'valorUnitario',
+        'cantidad',
+        'idFormaPago'
     ];
 
-    protected $hidden = [
-    ];
+    protected $hidden = [];
 
     protected $attributes = [
         'activo' => 1,
@@ -28,6 +37,28 @@ class Deduccione extends Model implements AuthenticatableContract, AuthorizableC
         'concepto',
         'forma'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($deduccion) {
+            if ($deduccion->Nomina) {
+                $deduccion->Nomina->recalcularTotal();
+            }
+        });
+
+        static::deleted(function ($deduccion) {
+            if ($deduccion->Nomina) {
+                $deduccion->Nomina->recalcularTotal();
+            }
+        });
+    }
+
+    public function Nomina()
+    {
+        return $this->belongsTo(\App\Nomina::class, 'idNomina', 'id');
+    }
 
     public function RelConceptos()
     {
@@ -41,11 +72,11 @@ class Deduccione extends Model implements AuthenticatableContract, AuthorizableC
 
     public function getConceptoAttribute()
     {
-        return $this->RelConceptos->nombre;
+        return optional($this->RelConceptos)->nombre;
     }
 
     public function getFormaAttribute()
     {
-        return $this->RelFormasPagos->nombre;
+        return optional($this->RelFormasPagos)->nombre;
     }
 }

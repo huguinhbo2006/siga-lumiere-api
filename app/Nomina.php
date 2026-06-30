@@ -12,11 +12,6 @@ class Nomina extends Model implements AuthenticatableContract, AuthorizableContr
 {
     use Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'updated_at',
         'created_at',
@@ -40,11 +35,37 @@ class Nomina extends Model implements AuthenticatableContract, AuthorizableContr
         'observaciones'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
     protected $hidden = [];
 
+    protected $attributes = [
+        'activo' => 1,
+        'eliminado' => 0,
+        'total' => 0
+    ];
+
+    public function Percepciones()
+    {
+        return $this->hasMany(\App\Percepcione::class, 'idNomina', 'id');
+    }
+
+    public function Deducciones()
+    {
+        return $this->hasMany(\App\Deduccione::class, 'idNomina', 'id');
+    }
+
+    public function recalcularTotal()
+    {
+        $percepciones = $this->Percepciones()
+            ->where('eliminado', 0)
+            ->sum('monto');
+
+        $deducciones = $this->Deducciones()
+            ->where('eliminado', 0)
+            ->sum('monto');
+
+        $this->total = $percepciones - $deducciones;
+        $this->save();
+
+        return $this->total;
+    }
 }

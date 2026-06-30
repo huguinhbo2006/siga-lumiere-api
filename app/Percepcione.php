@@ -13,11 +13,20 @@ class Percepcione extends Model implements AuthenticatableContract, Authorizable
     use Authenticatable, Authorizable;
 
     protected $fillable = [
-        'updated_at', 'created_at', 'activo', 'eliminado', 'id', 'idConcepto', 'monto', 'idNomina', 'cantidad', 'idFormaPago', 'valorUnitario'
+        'updated_at',
+        'created_at',
+        'activo',
+        'eliminado',
+        'id',
+        'idConcepto',
+        'monto',
+        'idNomina',
+        'cantidad',
+        'idFormaPago',
+        'valorUnitario'
     ];
 
-    protected $hidden = [
-    ];
+    protected $hidden = [];
 
     protected $attributes = [
         'activo' => 1,
@@ -28,6 +37,28 @@ class Percepcione extends Model implements AuthenticatableContract, Authorizable
         'concepto',
         'forma'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($percepcion) {
+            if ($percepcion->Nomina) {
+                $percepcion->Nomina->recalcularTotal();
+            }
+        });
+
+        static::deleted(function ($percepcion) {
+            if ($percepcion->Nomina) {
+                $percepcion->Nomina->recalcularTotal();
+            }
+        });
+    }
+
+    public function Nomina()
+    {
+        return $this->belongsTo(\App\Nomina::class, 'idNomina', 'id');
+    }
 
     public function RelConceptos()
     {
@@ -41,11 +72,11 @@ class Percepcione extends Model implements AuthenticatableContract, Authorizable
 
     public function getConceptoAttribute()
     {
-        return $this->RelConceptos->nombre;
+        return optional($this->RelConceptos)->nombre;
     }
 
     public function getFormaAttribute()
     {
-        return $this->RelFormasPagos->nombre;
+        return optional($this->RelFormasPagos)->nombre;
     }
 }
