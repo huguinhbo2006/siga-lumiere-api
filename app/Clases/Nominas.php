@@ -215,7 +215,7 @@
                     'idTipo' => 4,
                     'idSucursal' => $nomina->idSucursal,
                     'idCalendario' => $nomina->idCalendario,
-                    'idCuenta' => $nomina->idBanco,
+                    'idCuenta' => 1,
                     'idFormaPago' => $forma,
                     'idUsuario' => $usuario,
                     'referencia' => 3,

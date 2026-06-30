@@ -11,6 +11,8 @@ use App\Clases\Deducciones;
 use App\Clases\Solicitudesnominas;
 use App\Nivele;
 use App\Nomina;
+use App\Percepcione;
+use App\Deduccione;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
@@ -172,10 +174,10 @@ class NominasController extends BaseController
 
     function agregarPercepcion(Request $request) {
         try {
-            $funciones = new Nominas();
-            $solicitudes = new Solicitudesnominas();
-
-            return response()->json($solicitudes->nuevo($request['id'], $request['idFormaPago'], $request['monto'], $request['idConcepto'], $request['cantidad'], $request['valorUnitario'], $request['usuarioID'], 1, 1, 0), 200);
+            $data = $request->only('idFormaPago', 'monto', 'idConcepto', 'cantidad', 'valorUnitario');
+            $data['idNomina'] = $request['id'];
+            $percepcion = Percepcione::create($data);
+            return response()->json($percepcion, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
         }
@@ -183,9 +185,11 @@ class NominasController extends BaseController
 
     function agregarDeduccion(Request $request) {
         try {
-            $solicitudes = new Solicitudesnominas();
+            $data = $request->only('idFormaPago', 'monto', 'idConcepto', 'cantidad', 'valorUnitario');
+            $data['idNomina'] = $request['id'];
+            Deduccione::create($data);
 
-            return response()->json($solicitudes->nuevo($request['id'], $request['idFormaPago'], $request['monto'], $request['idConcepto'], $request['cantidad'], $request['valorUnitario'], $request['usuarioID'], 2, 1, 0), 200);
+            return response()->json(true, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
         }
@@ -193,9 +197,8 @@ class NominasController extends BaseController
 
     function eliminarPercepcion(Request $request) {
         try {
-            $solicitudes = new Solicitudesnominas();
-
-            return response()->json($solicitudes->nuevo($request['idNomina'], $request['idFormaPago'], $request['monto'], $request['idConcepto'], $request['cantidad'], $request['valorUnitario'], $request['usuarioID'], 1, 2, $request['id']), 200);
+            Percepcione::destroy($request['id']);
+            return response()->json(true, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
         }
@@ -203,9 +206,8 @@ class NominasController extends BaseController
 
     function eliminarDeduccion(Request $request) {
         try {
-            $solicitudes = new Solicitudesnominas();
-
-            return response()->json($solicitudes->nuevo($request['idNomina'], $request['idFormaPago'], $request['monto'], $request['idConcepto'], $request['cantidad'], $request['valorUnitario'], $request['usuarioID'], 2, 2, $request['id']), 200);   
+            Deduccione::destroy($request['id']);
+            return response()->json(true, 200);  
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
         }

@@ -8,24 +8,44 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class Deduccione extends Model implements  AuthenticatableContract, AuthorizableContract
+class Deduccione extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'updated_at', 'created_at', 'activo', 'eliminado', 'id', 'idConcepto', 'monto', 'idNomina', 'valorUnitario', 'cantidad', 'idFormaPago'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
     protected $hidden = [
     ];
+
+    protected $attributes = [
+        'activo' => 1,
+        'eliminado' => 0
+    ];
+
+    protected $appends = [
+        'concepto',
+        'forma'
+    ];
+
+    public function RelConceptos()
+    {
+        return $this->belongsTo(\App\Conceptosdeduccione::class, 'idConcepto', 'id');
+    }
+
+    public function RelFormasPagos()
+    {
+        return $this->belongsTo(\App\Formaspago::class, 'idFormaPago', 'id');
+    }
+
+    public function getConceptoAttribute()
+    {
+        return $this->RelConceptos->nombre;
+    }
+
+    public function getFormaAttribute()
+    {
+        return $this->RelFormasPagos->nombre;
+    }
 }
