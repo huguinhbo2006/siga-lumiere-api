@@ -35,7 +35,6 @@ class Egreso extends Model implements AuthenticatableContract, AuthorizableContr
         'folio',
         'idCuenta',
         'voucher',
-        'idBanco',
         'idSucursalGasto'
     ];
 

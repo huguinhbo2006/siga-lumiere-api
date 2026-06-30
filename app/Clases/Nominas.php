@@ -196,9 +196,6 @@
 
 		function crearEgreso($nomina, $usuario, $total, $forma){
 			try {
-				$folios = new Folios();
-
-				$folio = $folios->proximoEgreso($nomina->idNivel, $nomina->idCalendario, $nomina->idSucursal);
 				$egreso = Egreso::create([
                     'concepto' => (intval($forma) === 1) ? 'Pago en Efectivo a Nomina' : 'Pago en Deposito a Nomina',
                     'monto' => $total,
@@ -212,8 +209,6 @@
                     'idUsuario' => $usuario,
                     'referencia' => 3,
                     'idNivel' => $nomina->idNivel,
-                    'folio' => $folio,
-                    'idCuenta' => 0,
                     'activo' => 1,
                     'eliminado' => 0,
                 ]);
