@@ -7,9 +7,9 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
-use App\Cuentacorte;
 use App\Ingreso;
 use App\Egreso;
+use App\Calendario;
 
 class Cuenta extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -25,19 +25,14 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
 
     protected $hidden = [];
 
-    /**
-     * Campos calculados que se agregan al JSON
-     */
     protected $appends = [
-        'totalInicial',
         'totalIngresos',
         'totalEgresos',
         'totalFinal',
+        'positivo'
     ];
 
-    /* =========================
-       RELACIONES
-       ========================= */
+    protected $calendarioActual = null;
 
     public function ingresos()
     {
@@ -49,57 +44,55 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
         return $this->hasMany(Egreso::class, 'idCuenta', 'id');
     }
 
-    private function obtenerUltimoCorte()
+    private function obtenerCalendario()
     {
-        return Cuentacorte::where('idCuenta', $this->id)
-            ->where('activo', 1)
-            ->where('eliminado', 0)
-            ->orderByDesc('fecha')
-            ->first();
-    }
+        if ($this->calendarioActual === null) {
+            $this->calendarioActual = Calendario::where('eliminado', 0)
+                ->whereDate('inicio', '<=', date('Y-m-d'))
+                ->whereDate('fin', '>=', date('Y-m-d'))
+                ->first();
+        }
 
-    /* =========================
-       ACCESSORS
-       ========================= */
-
-    public function getTotalInicialAttribute()
-    {
-        $corte = $this->obtenerUltimoCorte();
-
-        return $corte ? (float) $corte->monto : 0;
+        return $this->calendarioActual;
     }
 
     public function getTotalIngresosAttribute()
     {
-        $corte = $this->obtenerUltimoCorte();
+        $calendario = $this->obtenerCalendario();
 
-        $query = Ingreso::where('idCuenta', $this->id);
-
-        if ($corte) {
-            $query->whereDate('fecha', '>', $corte->fecha);
+        if (!$calendario) {
+            return 0;
         }
 
-        return (float) $query->sum('monto');
+        return (float) Ingreso::where('idCuenta', $this->id)
+            ->where('idCalendario', $calendario->id)
+            ->sum('monto');
     }
 
     public function getTotalEgresosAttribute()
     {
-        $corte = $this->obtenerUltimoCorte();
+        $calendario = $this->obtenerCalendario();
 
-        $query = Egreso::where('idCuenta', $this->id);
-
-        if ($corte) {
-            $query->whereDate('created_at', '>', $corte->fecha);
+        if (!$calendario) {
+            return 0;
         }
 
-        return (float) $query->sum('monto');
+        return (float) Egreso::where('idCuenta', $this->id)
+            ->where('idCalendario', $calendario->id)
+            ->sum('monto');
     }
 
     public function getTotalFinalAttribute()
     {
-        return
-            $this->totalInicial +
+        return round(
             $this->totalIngresos -
-            $this->totalEgresos;
+            $this->totalEgresos,
+            2
+        );
+    }
+
+    public function getPositivoAttribute()
+    {
+        return $this->total_final >= 0;
     }
 }
