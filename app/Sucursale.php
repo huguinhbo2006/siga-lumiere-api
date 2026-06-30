@@ -43,7 +43,8 @@ class Sucursale extends Model implements AuthenticatableContract, AuthorizableCo
         return $this->hasMany(Ingreso::class, 'idSucursal', 'id')
                     ->where('activo', 1)
                     ->where('eliminado', 0)
-                    ->where('idFormaPago', 1); // EFECTIVO
+                    ->where('idFormaPago', 1)
+                    ->where('idCalendario', 26); // EFECTIVO
     }
 
     public function egresos()
@@ -51,7 +52,8 @@ class Sucursale extends Model implements AuthenticatableContract, AuthorizableCo
         return $this->hasMany(Egreso::class, 'idSucursal', 'id')
                     ->where('activo', 1)
                     ->where('eliminado', 0)
-                    ->where('idFormaPago', 1); // EFECTIVO
+                    ->where('idFormaPago', 1)
+                    ->where('idCalendario', 26); // EFECTIVO
     }
 
     public function valesAdministrativos()
