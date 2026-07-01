@@ -13,17 +13,12 @@ use App\Vale;
 use App\Alumnoabono;
 use App\Calendario;
 use App\Nivele;
+use Illuminate\Support\Facades\DB; // <-- Agregado para usar DB::raw
 
-
-class Ingreso extends Model implements  AuthenticatableContract, AuthorizableContract
+class Ingreso extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     public function getCreatedAtAttribute($value){
         return Carbon::parse($value)->format('d-m-Y');
     }
@@ -32,18 +27,11 @@ class Ingreso extends Model implements  AuthenticatableContract, AuthorizableCon
         return $value;
     }
 
-    
     protected $fillable = [
         'id', 'concepto', 'monto', 'observaciones', 'idRubro', 'idTipo', 'idSucursal', 'idCalendario', 'idFormaPago', 'idMetodoPago', 'idUsuario', 'activo', 'eliminado', 'created_at', 'update_at', 'referencia', 'folio', 'idNivel', 'imagen', 'idBanco', 'nombreCuenta', 'numeroReferencia', 'idCuenta', 'fecha', 'auditado'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-    ];
+    protected $hidden = [];
 
     protected $attributes = [
         'activo' => 1,
@@ -89,5 +77,83 @@ class Ingreso extends Model implements  AuthenticatableContract, AuthorizableCon
                 }
             }
         });
+    }
+
+
+    public function scopeReporteGeneralCalendario($query, $idCalendario)
+    {
+        return $query->from('ingresos as i')
+            ->join('calendarios as c', 'i.idCalendario', '=', 'c.id')
+            ->join('niveles as n', 'i.idNivel', '=', 'n.id')
+            ->join('sucursales as s', 'i.idSucursal', '=', 's.id')
+            ->join('rubros as ri', 'i.idRubro', '=', 'ri.id')
+            ->join('formaspagos as fp', 'i.idFormaPago', '=', 'fp.id')
+            ->select(
+                'i.id',
+                'i.folio',
+                'n.nombre as nivel',
+                'c.nombre as calendario',
+                's.nombre as sucursal',
+                DB::raw('MONTHNAME(i.created_at) as mes'),
+                DB::raw("DATE_FORMAT(i.created_at, '%Y-%m-%d') as fecha"),
+                DB::raw("DATE_FORMAT(i.created_at, '%H:%i:%s') as hora"),
+                'ri.nombre as rubro',
+                'i.concepto',
+                'fp.nombre as forma',
+                // Replicamos exactamente tu condición: si es 0 o NULL es Efectivo, si no, busca en cuentas
+                DB::raw("
+                    IF((i.idCuenta = 0 OR i.idCuenta IS NULL), 
+                        'Efectivo', 
+                        (SELECT nombre FROM cuentas WHERE id = i.idCuenta)
+                    ) as cuenta
+                "),
+                'i.monto',
+                'i.activo'
+            )
+            ->where('i.idCalendario', $idCalendario);
+    }
+
+    public function scopeReporte($query, array $filtros)
+    {
+        return $query->from('ingresos as i')
+            ->join('calendarios as c', 'i.idCalendario', '=', 'c.id')
+            ->join('niveles as n', 'i.idNivel', '=', 'n.id')
+            ->join('sucursales as s', 'i.idSucursal', '=', 's.id')
+            ->join('rubros as ri', 'i.idRubro', '=', 'ri.id')
+            ->join('formaspagos as fp', 'i.idFormaPago', '=', 'fp.id')
+            ->select(
+                'i.id',
+                'i.folio',
+                'n.nombre as nivel',
+                'c.nombre as calendario',
+                's.nombre as sucursal',
+                DB::raw('MONTHNAME(i.created_at) as mes'),
+                DB::raw("DATE_FORMAT(i.created_at, '%Y-%m-%d') as fecha"),
+                DB::raw("DATE_FORMAT(i.created_at, '%H:%i:%s') as hora"),
+                'ri.nombre as rubro',
+                'i.concepto',
+                'fp.nombre as forma',
+                DB::raw("
+                    IF((i.idCuenta = 0 OR i.idCuenta IS NULL), 
+                        'Efectivo', 
+                        (SELECT nombre FROM cuentas WHERE id = i.idCuenta)
+                    ) as cuenta
+                "),
+                'i.monto',
+                'i.activo'
+            )
+            
+            ->when(!empty($filtros['idCalendario']), function ($q) use ($filtros) {
+                return $q->where('i.idCalendario', $filtros['idCalendario']);
+            })
+            ->when(!empty($filtros['idNivel']), function ($q) use ($filtros) {
+                return $q->where('i.idNivel', $filtros['idNivel']);
+            })
+            ->when(!empty($filtros['idSucursal']), function ($q) use ($filtros) {
+                return $q->where('i.idSucursal', $filtros['idSucursal']);
+            })
+            ->when(isset($filtros['activo']), function ($q) use ($filtros) { // Por si quieres filtrar activos/inactivos
+                return $q->where('i.activo', $filtros['activo']);
+            });
     }
 }

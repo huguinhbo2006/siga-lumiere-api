@@ -440,6 +440,31 @@ class ReportesController extends BaseController
         }
     }
 
+
+    function ingresosBasico(Request $request){
+        try {
+            $filtros['idCalendario'] = $request['idCalendario'];
+            $filtros['idSucursal'] = $request['sucursalID'];
+            $ingresos = Ingreso::reporte($filtros)->get();
+
+            return response()->json($ingresos, 200);
+        } catch (Exception ) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
+
+    function egresosBasico(Request $request){
+        try {
+            $filtros['idCalendario'] = $request['idCalendario'];
+            $filtros['idSucursal'] = $request['sucursalID'];
+            $ingresos = Egreso::reporte($filtros)->get();
+
+            return response()->json($ingresos, 200);
+        } catch (Exception ) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
+
     function egresosGenerales(Request $request){
         try {
             $egresos = array();

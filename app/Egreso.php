@@ -10,6 +10,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use App\Sucursale;
 use App\Calendario;
 use App\Nivele;
+use Illuminate\Support\Facades\DB;
 
 class Egreso extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -77,5 +78,62 @@ class Egreso extends Model implements AuthenticatableContract, AuthorizableContr
         'activo' => 1,
         'eliminado' => 0
     ];
-    
+
+    //Funciones Scope para reportes
+
+    /**
+     * Scope escalable para reportes de egresos con filtros dinámicos
+     */
+    public function scopeReporte($query, array $filtros)
+    {
+        return $query->from('egresos as e')
+            ->join('calendarios as c', 'e.idCalendario', '=', 'c.id')
+            ->join('niveles as n', 'e.idNivel', '=', 'n.id')
+            ->join('sucursales as s', 'e.idSucursal', '=', 's.id')
+            ->leftJoin('sucursales as sg', 'e.idSucursalGasto', '=', 'sg.id')
+            ->join('rubrosegresos as re', 'e.idRubro', '=', 're.id')
+            ->join('tiposegresos as te', 'e.idTipo', '=', 'te.id')
+            ->join('formaspagos as fp', 'e.idFormaPago', '=', 'fp.id')
+            ->select(
+                'e.id',
+                'e.folio',
+                'n.nombre as nivel',
+                'c.nombre as calendario',
+                's.nombre as sucursalCaptura',
+                DB::raw("COALESCE(sg.nombre, 'NA') as sucursalEgreso"),
+                DB::raw('MONTHNAME(e.created_at) as mes'),
+                DB::raw("DATE_FORMAT(e.created_at, '%Y-%m-%d') as fecha"),
+                DB::raw("DATE_FORMAT(e.created_at, '%H:%i:%s') as hora"),
+                're.nombre as rubro',
+                'te.nombre as tipo',
+                'e.concepto',
+                'fp.nombre as forma',
+                DB::raw("
+                    IF((e.idCuenta = 0 OR e.idCuenta IS NULL), 
+                        'Efectivo', 
+                        (SELECT nombre FROM cuentas WHERE id = e.idCuenta)
+                    ) as cuenta
+                "),
+                'e.monto',
+                'e.activo'
+            )
+            /* =======================================================
+               BLOQUE DE FILTROS DINÁMICOS PARA EGRESOS
+               ======================================================= */
+            ->when(!empty($filtros['idCalendario']), function ($q) use ($filtros) {
+                return $q->where('e.idCalendario', $filtros['idCalendario']);
+            })
+            ->when(!empty($filtros['idNivel']), function ($q) use ($filtros) {
+                return $q->where('e.idNivel', $filtros['idNivel']);
+            })
+            ->when(!empty($filtros['idSucursal']), function ($q) use ($filtros) {
+                return $q->where('e.idSucursal', $filtros['idSucursal']);
+            })
+            ->when(!empty($filtros['idSucursalGasto']), function ($q) use ($filtros) {
+                return $q->where('e.idSucursalGasto', $filtros['idSucursalGasto']);
+            })
+            ->when(isset($filtros['activo']), function ($q) use ($filtros) {
+                return $q->where('e.activo', $filtros['activo']);
+            });
+    }
 }

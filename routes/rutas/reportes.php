@@ -10,4 +10,6 @@
 	$router->get('reportes/selects', ['uses' => 'ReportesController@selects']);
 	$router->get('reportes/empleadosVentas', ['uses' => 'ReportesController@empleadosVentas']);
 	$router->post('reportes/prospectos', ['uses' => 'ReportesController@prospectos']);
+	$router->post('reportes/ingresosBasico', ['uses' => 'ReportesController@ingresosBasico']);
+	$router->post('reportes/egresosBasico', ['uses' => 'ReportesController@egresosBasico']);
 ?>
