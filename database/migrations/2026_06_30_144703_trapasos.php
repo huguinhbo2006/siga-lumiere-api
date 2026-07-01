@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 class Trapasos extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        //
+        Schema::create('traspasos', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('idIngreso');
+            $table->integer('idEgreso');
+            $table->integer('idFormaPago');
+            $table->integer('activo');
+            $table->integer('eliminado');
+            $table->timestamps();
+        });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+    
+    
     public function down()
     {
-        //
+        Schema::dropIfExists('traspasos');
     }
 }

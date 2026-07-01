@@ -72,5 +72,10 @@ class Egreso extends Model implements AuthenticatableContract, AuthorizableContr
             }
         });
     }
+
+    protected $attributes = [
+        'activo' => 1,
+        'eliminado' => 0
+    ];
     
 }

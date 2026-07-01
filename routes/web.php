@@ -135,4 +135,5 @@
 		include "rutas/prestadores.php";
 		include "rutas/creditos.php";
 		include "rutas/prestamos.php";
+		include "rutas/traspasos.php";
 	});

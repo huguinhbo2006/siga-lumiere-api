@@ -105,7 +105,8 @@ class BalancesucursalesController extends BaseController
       try {
         return response()->json(array(
           'cuentas' => Cuenta::all(),
-          'sucursales' => Sucursale::where('activo', 1)->where('eliminado', 0)->get()
+          'sucursales' => Sucursale::where('activo', 1)->where('eliminado', 0)->get(),
+          'formas' => Formaspago::where('eliminado', '=', 0)->where('activo', '=', 1)->get()
         ), 200);
       } catch (Exception $e) {
         return response()->json('Error en el servidor', 400);
