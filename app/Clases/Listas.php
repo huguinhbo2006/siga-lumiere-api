@@ -20,7 +20,7 @@ class Listas
                     $listas[$tabla] = DB::table('calendarios')
                         ->where('eliminado', 0)
                         ->where('activo', 1)
-                        ->whereDate('inicio', '>=', $hoy)
+                        ->whereDate($hoy, '>=', 'inicio')
                         ->get();
 
                     continue;
