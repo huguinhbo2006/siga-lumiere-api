@@ -30,8 +30,8 @@ class TraspasosController extends Controller
         	$egresoData['concepto'] = "Traspaso";
         	$egresoData['monto'] = $request['ingreso']['monto'];
         	$egresoData['observaciones'] = '';
-        	$egresoData['idRubro'] = 0;
-        	$egresoData['idTipo'] = 0;
+        	$egresoData['idRubro'] = 22;
+        	$egresoData['idTipo'] = 198;
         	$egresoData['idSucursal'] = 1;
         	$egresoData['idSucursalGasto'] = 1;
         	$egresoData['idCalendario'] = $request['calendarioID'];
@@ -47,9 +47,9 @@ class TraspasosController extends Controller
         	$ingresoData['concepto'] = 'Traspaso';
         	$ingresoData['monto'] =  $request['ingreso']['monto'];
         	$ingresoData['observaciones'] = '';
-        	$ingresoData['idRubro'] = 0;
-        	$ingresoData['idTipo'] = 0;
-        	$ingresoData['idSucursal'] = 1;
+        	$ingresoData['idRubro'] = 6;
+        	$ingresoData['idTipo'] = 26;
+        	$ingresoData['idSucursal'] = 10;
         	$ingresoData['idCalendario'] = $request['calendarioID'];
         	$ingresoData['idFormaPago'] = $request['ingreso']['idFormaPago'];
         	$ingresoData['idCuenta'] = $request['ingreso']['idCuenta'];
