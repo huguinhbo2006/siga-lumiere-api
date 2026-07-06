@@ -85,14 +85,13 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
     public function getTotalFinalAttribute()
     {
         return round(
-            $this->totalIngresos -
-            $this->totalEgresos,
+            $this->totalIngresos - $this->totalEgresos,
             2
         );
     }
 
     public function getPositivoAttribute()
     {
-        return $this->total_final >= 0;
+        return $this->totalFinal >= 0; 
     }
 }

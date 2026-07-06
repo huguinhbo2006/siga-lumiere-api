@@ -32,10 +32,10 @@ class TraspasosController extends Controller
         	$egresoData['observaciones'] = '';
         	$egresoData['idRubro'] = 22;
         	$egresoData['idTipo'] = 198;
-        	$egresoData['idSucursal'] = 1;
-        	$egresoData['idSucursalGasto'] = 1;
+        	$egresoData['idSucursal'] = 10;
+        	$egresoData['idSucursalGasto'] = 10;
         	$egresoData['idCalendario'] = $request['calendarioID'];
-        	$egresoData['idFormaPago'] = ($request['efectivo']) ? 1 : 4;
+        	$egresoData['idFormaPago'] = ($request['egreso']['efectivo']) ? 1 : 4;
         	$egresoData['idUsuario'] = $request['usuarioID'];
         	$egresoData['referencia'] = 120;
         	$egresoData['idNivel'] = 1;
@@ -51,7 +51,7 @@ class TraspasosController extends Controller
         	$ingresoData['idTipo'] = 26;
         	$ingresoData['idSucursal'] = 10;
         	$ingresoData['idCalendario'] = $request['calendarioID'];
-        	$ingresoData['idFormaPago'] = $request['ingreso']['idFormaPago'];
+        	$ingresoData['idFormaPago'] = ($request['egreso']['efectivo']) ? 4 : $request['ingreso']['idFormaPago'];
         	$ingresoData['idCuenta'] = $request['ingreso']['idCuenta'];
         	$ingresoData['idMetodoPago'] = 1;
         	$ingresoData['idUsuario'] = $request['usuarioID'];
