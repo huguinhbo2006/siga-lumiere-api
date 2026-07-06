@@ -35,7 +35,7 @@ class TraspasosController extends Controller
         	$egresoData['idSucursal'] = 1;
         	$egresoData['idSucursalGasto'] = 1;
         	$egresoData['idCalendario'] = $request['calendarioID'];
-        	$egresoData['idFormaPago'] = 4;
+        	$egresoData['idFormaPago'] = ($request['efectivo']) ? 1 : 4;
         	$egresoData['idUsuario'] = $request['usuarioID'];
         	$egresoData['referencia'] = 120;
         	$egresoData['idNivel'] = 1;
