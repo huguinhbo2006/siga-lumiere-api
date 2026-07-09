@@ -24,6 +24,7 @@ use App\Seccionesporcentaje;
 use App\Datosescolare;
 use App\Aspiracione;
 use App\Carrera;
+use App\Clases\Listas;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
@@ -34,21 +35,8 @@ class CalificadorController extends BaseController
 {
     function selects(){
         try {
-            $calendarios = Calendario::where('eliminado', '=', 0)->get();
-            $niveles = Nivele::where('eliminado', '=', 0)->get();
-            $subniveles = Subnivele::where('eliminado', '=', 0)->get();
-            $cursos = Curso::where('eliminado', '=', 0)->get();
-            $categorias = Categoria::where('eliminado', '=', 0)->get();
-            $modalidades = Modalidade::where('eliminado', '=', 0)->get();
-            $turnos = Turno::where('eliminado', '=', 0)->get();
+            $respuestas = Listas::listas(['actuales', 'niveles', 'subniveles', 'cursos', 'categorias', 'modalidades', 'turnos']);
 
-            $respuesta['calendarios'] = $calendarios;
-            $respuesta['niveles'] = $niveles;
-            $respuesta['subniveles'] = $subniveles;
-            $respuesta['cursos'] = $cursos;
-            $respuesta['categorias'] = $categorias;
-            $respuesta['modalidades'] = $modalidades;
-            $respuesta['turnos'] = $turnos;
             return response()->json($respuesta, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
@@ -57,57 +45,7 @@ class CalificadorController extends BaseController
 
     function mostrar(Request $request){
         try {
-            $respuesta['calendarios'] = Calendario::where('eliminado', '=', 0)->get();
-            $respuesta['niveles'] = Nivele::where('eliminado', '=', 0)->get();
-            $respuesta['subniveles'] = Subnivele::where('eliminado', '=', 0)->get();
-            $respuesta['cursos'] = Curso::where('eliminado', '=', 0)->get();
-            $respuesta['categorias'] = Categoria::where('eliminado', '=', 0)->get();
-            $respuesta['modalidades'] = Modalidade::where('eliminado', '=', 0)->get();
-            $respuesta['turnos'] = Turno::where('eliminado', '=', 0)->get();
-            $respuesta['horarios'] = Horario::select(
-                '*',
-                DB::raw('CONCAT(inicio," - ", fin) as nombre')
-            )->where('eliminado', '=', 0)->get();
-            $respuesta['grupos'] = Grupo::join('altacursos', 'idAltaCurso', '=', 'altacursos.id')->
-            join('calendarios', 'altacursos.idCalendario', '=', 'calendarios.id')->
-            join('niveles', 'altacursos.idNivel', '=', 'niveles.id')->
-            join('subniveles', 'altacursos.idSubnivel', '=', 'subniveles.id')->
-            join('categorias', 'altacursos.idCategoria', '=', 'categorias.id')->
-            join('modalidades', 'altacursos.idModalidad', '=', 'modalidades.id')->
-            join('turnos', 'idTurno', '=', 'turnos.id')->
-            join('horarios', 'idHorario', '=', 'horarios.id')->
-            join('cursos', 'altacursos.idCurso', '=', 'cursos.id')->
-            join('sedes', 'altacursos.idSede', '=', 'sedes.id')->
-            leftjoin('bloqueohorarios', 'grupos.id', '=', 'bloqueohorarios.idGrupo')->
-            select(
-                'grupos.id as id',
-                'altacursos.idCalendario',
-                'altacursos.idNivel',
-                'altacursos.idSubnivel',
-                'altacursos.idCategoria',
-                'altacursos.idModalidad',
-                'altacursos.idSede',
-                'altacursos.idCurso',
-                'altacursos.inicio',
-                'altacursos.fin',
-                'altacursos.limitePago',
-                'altacursos.precio',
-                'calendarios.nombre as calendario',
-                'niveles.nombre as nivel',
-                'subniveles.nombre as subnivel',
-                'categorias.nombre as categoria',
-                'modalidades.nombre as modalidad',
-                'sedes.nombre as sede',
-                'turnos.nombre as turno',
-                DB::raw("CONCAT(horarios.inicio, ' - ', horarios.fin) as horario"),
-                'cursos.nombre as curso',
-                'cursos.icono',
-                'grupos.idHorario', 
-                'grupos.idTurno',
-                DB::raw('IF((SELECT COUNT(*) FROM bloqueohorarios WHERE idGrupo = grupos.id AND idSucursal = '.$request['sucursalID'].' LIMIT 1) > 0, bloqueohorarios.id, 0) as idBloqueo'),
-                'bloqueohorarios.idSucursal'
-            )->
-            /*whereRaw('NOW() BETWEEN calendarios.inicio AND calendarios.fin')->*/get();
+            $respuesta = Listas::listas(['actuales', 'niveles', 'subniveles', 'cursos', 'categorias', 'modalidades', 'turnos', 'horarios']);
             return response()->json($respuesta, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);

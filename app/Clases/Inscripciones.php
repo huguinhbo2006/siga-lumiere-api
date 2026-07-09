@@ -324,7 +324,7 @@
 					'idGrupo' => $datos['idGrupo'],
 					'semana' => date('W'),
 					'idSucursalImparticion' => $datos['idSucursalImparticion'],
-					'idSucursalInscripcion' => (intval($datos['idSucursalInscripcion']) === 1) ? $datos['idSucursalImparticion'] : $datos['idSucursalInscripcion'],
+					'idSucursalInscripcion' => $datos['idSucursalInscripcion'],
 					'idCalendario' => $datos['idCalendario'],
 					'idUsuario' => $datos['idUsuario'],
 					'idUsuarioInformacion' => $datos['idUsuarioInformacion'],
