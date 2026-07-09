@@ -6,6 +6,7 @@ use App\Empleado;
 use App\Sucursale;
 use App\Usuariosucursale;
 use App\Usuario;
+use App\Clases\Listas;
 use Illuminate\Support\Facades\Hash;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -18,7 +19,10 @@ class EmpleadosController extends BaseController
     function mostrar(){
         try{
             $funciones = new Empleados();
-            return response()->json($funciones->obtener(), 200);
+            $respuesta['datos'] = $funciones->obtener();
+            $respuesta['listas']['domicilio'] = Listas::listas(['estados', 'municipios']);
+            $respuesta['listas']['empresa'] = Listas::listas(['sucursales', 'departamentos', 'puestos']);
+            return response()->json($respuesta, 200);
         }catch(Exception $e){
             return response()->json("Error en el servidor", 400);
         }
@@ -32,9 +36,9 @@ class EmpleadosController extends BaseController
             $empresa = $request['empresa'];
             $imagenes = $request['imagenes'];
 
-            $fechaIngreso = ($fiscales['fechaIngreso'] == null || $fiscales['fechaIngreso'] == '') ? null : $fiscales['fechaIngreso'];
-            $fechaAltaIMSS = ($fiscales['fechaAltaIMSS'] == null || $fiscales['fechaAltaIMSS'] == '') ? null : $fiscales['fechaAltaIMSS'];
-            $fechaNacimiento = ($personales['fechaNacimiento'] == null || $personales['fechaNacimiento'] == '') ? null : $personales['fechaNacimiento'];
+            $fechaIngreso = (is_null($fiscales['fechaIngreso']) || $fiscales['fechaIngreso'] == '') ? null : $fiscales['fechaIngreso'];
+            $fechaAltaIMSS = (is_null($fiscales['fechaAltaImss']) || $fiscales['fechaAltaImss'] == '') ? null : $fiscales['fechaAltaImss'];
+            $fechaNacimiento = (is_null($personales['fechaNacimiento']) || $personales['fechaNacimiento'] == '') ? null : $personales['fechaNacimiento'];
             $hay = Empleado::all();
             
             $empleado = Empleado::create([
@@ -67,18 +71,18 @@ class EmpleadosController extends BaseController
                 'idSucursal' => $empresa['idSucursal'],
                 'idDepartamento' => $empresa['idDepartamento'],
                 'idPuesto' => $empresa['idPuesto'],
-                'bonoPuntualidad' => $empresa['bonoPuntualidad'],
+                'bonoPuntualidad' => $empresa['bono'],
                 //Imagenes
-                'actaNacimiento' => $imagenes['actaNacimiento'],
-                'comprobanteDomicilio' => $imagenes['comprobanteDomicilio'],
-                'curpImagen' => $imagenes['curpImagen'],
-                'ifef' => $imagenes['ifef'],
-                'ifet' => $imagenes['ifet'],
-                'rfcImagen' => $imagenes['rfcImagen'],
-                'carta1' => $imagenes['carta1'],
-                'carta2' => $imagenes['carta2'],
-                'nssImagen' => $imagenes['nssImagen'],
-                'comprobanteEstudios' => $imagenes['comprobanteEstudios'],
+                'actaNacimiento' => NULL,
+                'comprobanteDomicilio' => NULL,
+                'curpImagen' => NULL,
+                'ifef' => NULL,
+                'ifet' => NULL,
+                'rfcImagen' => NULL,
+                'carta1' => NULL,
+                'carta2' => NULL,
+                'nssImagen' => NULL,
+                'comprobanteEstudios' => NULL,
                 //Otros
                 'activo' => 1,
                 'eliminado' => 0

@@ -12,7 +12,7 @@
   			return Empleado::join('departamentos', 'idDepartamento', '=', 'departamentos.id')->
   			join('sucursales', 'idSucursal', '=', 'sucursales.id')->
   			join('puestos', 'idPuesto', '=', 'puestos.id')->
-  			join('usuarios', 'usuarios.idEmpleado', '=', 'empleados.id')->
+  			leftjoin('usuarios', 'usuarios.idEmpleado', '=', 'empleados.id')->
   			select(
   				'empleados.*',
   				'departamentos.nombre as departamento',
