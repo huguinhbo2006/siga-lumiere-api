@@ -22,7 +22,7 @@
 
   	function traer($sucursalID){
   		try {
-  			return Aula::where('idSucursal', '=', $sucursalID)->get();
+  			return Aula::where('idSucursal', '=', $sucursalID)->where('eliminado', '=', 0)->where('activo', '=', 1)->get();
   		} catch (Exception $e) {
   			return null;
   		}

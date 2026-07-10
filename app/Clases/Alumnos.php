@@ -185,15 +185,15 @@
 
     function fichas($id){
       try {
-        return Ficha::join('grupos', 'idGrupo', '=', 'grupos.id')->
-                join('altacursos', 'grupos.idAltaCurso', '=', 'altacursos.id')->
-                join('niveles', 'altacursos.idNivel', '=', 'niveles.id')->
-                join('subniveles', 'altacursos.idSubnivel', '=', 'subniveles.id')->
-                join('modalidades', 'altacursos.idModalidad', '=', 'modalidades.id')->
-                join('categorias', 'altacursos.idCategoria', '=', 'categorias.id')->
-                join('cursos', 'altacursos.idCurso', '=', 'cursos.id')->
-                join('turnos', 'grupos.idTurno', '=', 'turnos.id')->
-                join('horarios', 'grupos.idHorario', '=', 'horarios.id')->
+        return Ficha::leftjoin('grupos', 'idGrupo', '=', 'grupos.id')->
+                leftjoin('altacursos', 'grupos.idAltaCurso', '=', 'altacursos.id')->
+                leftjoin('niveles', 'altacursos.idNivel', '=', 'niveles.id')->
+                leftjoin('subniveles', 'altacursos.idSubnivel', '=', 'subniveles.id')->
+                leftjoin('modalidades', 'altacursos.idModalidad', '=', 'modalidades.id')->
+                leftjoin('categorias', 'altacursos.idCategoria', '=', 'categorias.id')->
+                leftjoin('cursos', 'altacursos.idCurso', '=', 'cursos.id')->
+                leftjoin('turnos', 'grupos.idTurno', '=', 'turnos.id')->
+                leftjoin('horarios', 'grupos.idHorario', '=', 'horarios.id')->
                 leftjoin('cupones', 'cupones.idFicha', '=', 'fichas.id')->
                 select(
                     'fichas.folio as folio',
