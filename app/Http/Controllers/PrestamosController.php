@@ -123,7 +123,7 @@ class PrestamosController extends Controller
             
             $datos['idUsuario'] = $request['usuarioID'];
             $datos['idPrestamo'] = $request['id']; 
-            $datos['idEgreso'] = 0; 
+            $datos['idIngreso'] = $ingreso->id; 
             $datos['activo'] = 1;
             $datos['eliminado'] = 0;
             $datos['idCalendario'] = $request['calendarioID'];

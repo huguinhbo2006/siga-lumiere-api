@@ -117,7 +117,7 @@ class CreditosController extends Controller
                 'idTipo' => 200,
                 'idSucursal' => 10,
                 'idSucursalGasto' => 10,
-                'idCalendario' => $request['idCalendario'],
+                'idCalendario' => $request['calendarioID'],
                 'idFormaPago' => $request['idFormaPago'],
                 'idUsuario' => $request['usuarioID'],
                 'referencia' => 100,

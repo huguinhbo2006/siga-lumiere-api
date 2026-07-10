@@ -32,7 +32,7 @@ class Prestamoabono extends Model
         'idUsuario',
         'idCuenta',
         'idCalendario',
-        'idEgreso',
+        'idIngreso',
         'activo',
         'eliminado',
     ];
