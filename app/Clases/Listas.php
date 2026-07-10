@@ -36,10 +36,27 @@ class Listas
                     continue;
                 }
 
+                // Validamos que la tabla exista antes de continuar
                 if (!DB::getSchemaBuilder()->hasTable($tabla)) {
                     continue;
                 }
 
+                // Lógica especial para la tabla 'horarios'
+                if ($tabla == 'horarios') {
+                    $listas[$tabla] = DB::table('horarios')
+                        ->where('eliminado', 0)
+                        ->where('activo', 1)
+                        ->get()
+                        ->map(function ($item) {
+                            // Creamos el campo 'nombre' uniendo inicio y fin
+                            $item->nombre = $item->inicio . ' - ' . $item->fin;
+                            return $item;
+                        });
+
+                    continue;
+                }
+
+                // Comportamiento por defecto para el resto de las tablas
                 $listas[$tabla] = DB::table($tabla)
                     ->where('eliminado', 0)
                     ->where('activo', 1)

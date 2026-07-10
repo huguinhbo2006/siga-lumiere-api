@@ -68,7 +68,8 @@
                         break;
                 }
                 if(intval($ingreso->idFormaPago) !== 1){
-                    $ingreso->banco = Banco::find($ingreso->idBanco)->nombre;
+                    $banco = Banco::find($ingreso->idBanco);
+                    $ingreso->banco = (is_null($banco)) ? 'NA' : Banco::find($ingreso->idBanco)->nombre;
                     $ingreso->cuenta = Cuenta::find($ingreso->idCuenta)->nombre;
                 }else{
                     $ingreso->banco = 'N/A';

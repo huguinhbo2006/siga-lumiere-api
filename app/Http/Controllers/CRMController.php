@@ -159,7 +159,7 @@ class CRMController extends BaseController
                        END
                     ) AS estatus"),
                 DB::raw("ELT(MONTH(prospectos.created_at), 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre') as mes")
-            )->where('prospectos.eliminado', '=', 0)->where('prospectos.activo', '=', 1)->get();
+            )->where('prospectos.eliminado', '=', 0)->where('prospectos.activo', '=', 1)->where('prospectos.estatus', '=', 2)->get();
             return response()->json($consulta, 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
