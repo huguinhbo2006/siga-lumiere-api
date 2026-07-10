@@ -20,7 +20,7 @@
 
 	class Egresos{
 		function totalEfectivo($sucursal){
-			$total = Egreso::where('activo', '=', 1)->where('idSucursal', '=', $sucursal)->where('idFormaPago', '=', 1)->sum('monto');
+			$total = Egreso::where('activo', '=', 1)->where('idSucursal', '=', $sucursal)->where('idFormaPago', '=', 1)->where('idCalendario', '>=', 26)->sum('monto');
 			return $total + 0;
 		}
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Egreso;
+use App\Ingreso;
 use App\Calendario;
 use App\Egresosolicitude;
 use Carbon\Carbon;
@@ -23,10 +24,11 @@ class EgresosController extends BaseController
             $ingresos = new Ingresos();
             $folios = new Folios();
 
-            $saldoEgresos = $funciones->totalEfectivo($request['sucursalID']);
-            $saldoIngresos = $ingresos->totalEfectivo($request['sucursalID']);
-            if(floatval($request['monto']) > (floatval($saldoIngresos) - floatval($saldoEgresos)) && intval($request['idFormaPago']) === 1){
-                return response()->json("No cuentas con suficiente saldo para realizar este egreso", 400);
+            $saldoEgresos = Egreso::where('activo', '=', 1)->where('idSucursal', '=', $request['sucursalID'])->where('idFormaPago', '=', 1)->where('idCalendario', '>=', 26)->sum('monto');
+            $saldoIngresos = Ingreso::where('activo', '=', 1)->where('idSucursal', '=', $request['sucursalID'])->where('idFormaPago', '=', 1)->where('idCalendario', '>=', 26)->sum('monto');
+            $fondo = $saldoIngresos - $saldoEgresos;
+            if(floatval($request['monto']) > $fondo && intval($request['idFormaPago']) === 1){
+                return response()->json("No cuentas con suficiente saldo para realizar este egreso su fondo es de ".$fondo, 400);
             }
             $folio = $folios->proximoEgreso($request['idNivel'], $request['idCalendario'], $request['sucursalID']);
 
