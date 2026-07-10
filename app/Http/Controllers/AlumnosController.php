@@ -10,6 +10,7 @@ use App\Clases\Cupones;
 use App\Clases\CRM;
 use App\Clases\Datospublicitarios;
 use App\Clases\Datosaspiraciones;
+use App\Alumno;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -242,6 +243,29 @@ class AlumnosController extends BaseController
 
             return response()->json($respuesta, 200);
         } catch (Exception $e) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
+
+    function alumno(Request $request){
+        try {
+            $alumno = Alumno::find($request['id']);
+            return response()->json($alumno, 200);
+        } catch (Exception ) {
+            return response()->json('Error en el servidor', 400);
+        }
+    }
+
+    function modificarNombre(Request $request){
+        try {
+            $alumno = Alumno::find($request['id']);
+            $alumno->nombre = $request['nombre'];
+            $alumno->apellidoPaterno = $request['apellidoPaterno'];
+            $alumno->apellidoMaterno = $request['apellidoMaterno'];
+            $alumno->codigo = $request['codigo'];
+            $alumno->save();
+            return response()->json($alumno, 200);
+        } catch (Exception ) {
             return response()->json('Error en el servidor', 400);
         }
     }

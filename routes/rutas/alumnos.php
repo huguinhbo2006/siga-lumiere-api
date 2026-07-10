@@ -11,4 +11,6 @@
 	$router->post('alumnos/actualizarDatosAspiracion', ['uses' => 'AlumnosController@actualizarDatosAspiracion']);
 	$router->post('alumnos/traer', ['uses' => 'AlumnosController@traer']);
 	$router->post('alumnos/inscripcion', ['uses' => 'AlumnosController@inscripcion']);
+	$router->post('alumnos/alumno', ['uses' => 'AlumnosController@alumno']);
+	$router->post('alumnos/modificarNombre', ['uses' => 'AlumnosController@modificarNombre']);
 ?>
