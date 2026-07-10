@@ -49,7 +49,7 @@
 		}
 
 		function totalEfectivo($sucursal){
-			$total = Ingreso::where('activo', '=', 1)->where('idSucursal', '=', $sucursal)->where('idFormaPago', '=', 1)->where('eliminado', '=', 0)->sum('monto');
+			$total = Ingreso::where('activo', '=', 1)->where('idSucursal', '=', $sucursal)->where('idFormaPago', '=', 1)->where('eliminado', '=', 0)->where('idCalendario', '=', 26)->sum('monto');
 			return $total + 0;
 		}
 
