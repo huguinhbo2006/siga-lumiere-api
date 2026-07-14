@@ -101,7 +101,7 @@ class PagesController extends Controller
 
     private function crearCarpetaPagina($pageId){
 
-        $ruta = base_path('pages/'.$pageId);
+        $ruta = base_path('uploads/'.$pageId);
 
         if(!file_exists($ruta)){
             mkdir($ruta,0777,true);
@@ -130,9 +130,9 @@ class PagesController extends Controller
 
             foreach($data as $key=>$value){
 
-                if(is_string($value) && str_starts_with($value,'data:image')){
+                if(is_string($value) && str_contains($value,'data:image')){
 
-                    $data[$key] = $this->guardarImagen($value,$tipo,$pageId);
+                    $data[$key] = $this->procesarTextoConImagenes($value,$tipo,$pageId);
 
                 }
                 elseif(is_array($value)){
@@ -150,32 +150,39 @@ class PagesController extends Controller
 
     /* ============================= */
 
-    private function guardarImagen($base64,$tipo,$pageId){
+    private function procesarTextoConImagenes($texto, $tipo, $pageId){
 
-        preg_match('/data:image\/(\w+);base64,/',$base64,$type);
+        $pattern = '/data:image\/(\w+);base64,([A-Za-z0-9+\/=\s]+)/';
 
-        $base64 = preg_replace('/^data:image\/\w+;base64,/','',$base64);
-        $imagen = base64_decode($base64);
+        return preg_replace_callback($pattern, function($matches) use ($tipo, $pageId) {
+            $extension = $matches[1];
+            $base64Data = $matches[2];
+            
+            // Eliminar espacios en blanco y saltos de línea de la cadena base64
+            $base64Data = preg_replace('/\s+/', '', $base64Data);
+            
+            $imagen = base64_decode($base64Data);
+            if (!$imagen) {
+                return $matches[0];
+            }
 
-        $hash = md5($imagen);
+            $hash = md5($imagen);
+            $carpeta = base_path("uploads/$pageId/$tipo");
 
-        $carpeta = base_path("pages/$pageId/$tipo");
+            if (!file_exists($carpeta)) {
+                mkdir($carpeta, 0777, true);
+            }
 
-        if(!file_exists($carpeta)){
-            mkdir($carpeta,0777,true);
-        }
+            $archivo = "$carpeta/$hash.$extension";
 
-        $archivo = "$carpeta/$hash.jpg";
+            if (!file_exists($archivo)) {
+                file_put_contents($archivo, $imagen);
+            }
 
-        if(!file_exists($archivo)){
-            file_put_contents($archivo,$imagen);
-        }
-
-        return url("/pages/$pageId/$tipo/$hash.jpg");
+            return url("/uploads/$pageId/$tipo/$hash.$extension");
+        }, $texto);
 
     }
-
-
 
     /* ============================= */
 
@@ -187,8 +194,13 @@ class PagesController extends Controller
 
             foreach($data as $value){
 
-                if(is_string($value) && str_contains($value,'/pages/')){
-                    $imagenes[]=$value;
+                if(is_string($value)){
+                    $base_url = url('/');
+                    $escaped_base = preg_quote($base_url, '/');
+                    preg_match_all('/' . $escaped_base . '\/uploads\/[a-zA-Z0-9\-_\/]+\.[a-zA-Z0-9]+/i', $value, $matches);
+                    if (!empty($matches[0])) {
+                        $imagenes = array_merge($imagenes, $matches[0]);
+                    }
                 }
                 elseif(is_array($value)){
                     $imagenes=array_merge($imagenes,$this->extraerImagenes($value));

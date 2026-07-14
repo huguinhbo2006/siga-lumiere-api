@@ -67,7 +67,6 @@ class InscripcionesController extends BaseController
             $datosInscripcion = $request['inscripcion'];
             $datosInscripcion['idAlumno'] = $respuesta['alumno']->id;
             $datosInscripcion['intentos'] = $request['escolares']['intentos'];
-            $datosInscripcion['idSucursalInscripcion'] = $request['idSucursalInscripcion'];
             $datosInscripcion['idUsuario'] = $request['usuarioID'];
             $datosInscripcion['idUsuarioInformacion'] = (intval($informacionID) === 0) ? $request['usuarioID'] : $informacionID;
             $respuesta['ficha'] = $funciones->nuevaFicha($datosInscripcion);
