@@ -44,7 +44,7 @@ class Sucursale extends Model implements AuthenticatableContract, AuthorizableCo
                     ->where('activo', 1)
                     ->where('eliminado', 0)
                     ->where('idFormaPago', 1)
-                    ->where('idCalendario', 26); // EFECTIVO
+                    ->where('idCalendario', '>=', 26); // EFECTIVO
     }
 
     public function egresos()
@@ -53,7 +53,7 @@ class Sucursale extends Model implements AuthenticatableContract, AuthorizableCo
                     ->where('activo', 1)
                     ->where('eliminado', 0)
                     ->where('idFormaPago', 1)
-                    ->where('idCalendario', 26); // EFECTIVO
+                    ->where('idCalendario', '>=', 26); // EFECTIVO
     }
 
     public function valesAdministrativos()
