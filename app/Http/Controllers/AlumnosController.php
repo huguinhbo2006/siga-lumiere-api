@@ -262,6 +262,7 @@ class AlumnosController extends BaseController
             $alumno->nombre = $request['nombre'];
             $alumno->apellidoPaterno = $request['apellidoPaterno'];
             $alumno->apellidoMaterno = $request['apellidoMaterno'];
+            $alumno->fechaNacimiento = $request['fechaNacimiento'];
             $alumno->codigo = $request['codigo'];
             $alumno->save();
             return response()->json($alumno, 200);
