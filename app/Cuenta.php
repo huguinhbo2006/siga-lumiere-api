@@ -67,7 +67,9 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
         return (float) Ingreso::where('idCuenta', $this->id)
             ->where('eliminado', 0)
             ->where('activo', 1)
-            ->where('idCalendario', 26)
+            ->where('idCalendario', '>=', 26)
+            ->where('referencia', '<', 100)
+            ->where('referencia', '<>', 4)
             ->sum('monto');
     }
 
@@ -82,7 +84,9 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
         return (float) Egreso::where('idCuenta', $this->id)
             ->where('eliminado', 0)
             ->where('activo', 1)
-            ->where('idCalendario', 26)
+            ->where('idCalendario', '>=', 26)
+            ->where('referencia', '<', 100)
+            ->where('referencia', '<>', 4)
             ->sum('monto');
     }
 

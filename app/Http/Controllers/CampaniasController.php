@@ -12,6 +12,7 @@ class CampaniasController extends BaseController
     function mostrar(){
         try{
             $campanias = Campania::where('eliminado', '=', 0)->get();
+            //Hola Mundo
             return response()->json($campanias, 200);
         }catch(Exception $e){
             return response()->json("Error en el servidor", 400);

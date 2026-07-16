@@ -293,13 +293,13 @@
 	function egresosGeneralesCalendario($idCalendario){
 		try {
 			$registros=DB::table('egresos as e')
-			->join('calendarios as c','e.idCalendario','=','c.id')
-			->join('niveles as n','e.idNivel','=','n.id')
-			->join('sucursales as s','e.idSucursal','=','s.id')
+			->leftjoin('calendarios as c','e.idCalendario','=','c.id')
+			->leftjoin('niveles as n','e.idNivel','=','n.id')
+			->leftjoin('sucursales as s','e.idSucursal','=','s.id')
 			->leftjoin('sucursales as sg','e.idSucursalGasto','=','sg.id')
-			->join('rubrosegresos as re','e.idRubro','=','re.id')
-			->join('tiposegresos as te','e.idTipo','=','te.id')
-			->join('formaspagos as fp','e.idFormaPago','=','fp.id')
+			->leftjoin('rubrosegresos as re','e.idRubro','=','re.id')
+			->leftjoin('tiposegresos as te','e.idTipo','=','te.id')
+			->leftjoin('formaspagos as fp','e.idFormaPago','=','fp.id')
 			->leftjoin('cuentas', 'e.idCuenta', '=', 'cuentas.id')
 			->select(
 				'e.id',
