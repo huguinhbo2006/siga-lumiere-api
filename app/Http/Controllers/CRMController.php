@@ -61,7 +61,7 @@ use App\Conceptosdescuento;
 use App\Tipopago;
 USE App\Empresaconvenio;
 use Carbon\Carbon;
-
+use App\Clases\Inscripciones;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -476,108 +476,26 @@ class CRMController extends BaseController
                 $lista[] = $descripcion;
             }
 
-            $sexos = Sexo::where('eliminado', '=', 0)->get();
-            $consulta = "SELECT * FROM calendarios WHERE fin > NOW() AND eliminado = 0 AND activo = 1";
-            $calendarios = DB::select($consulta, array());
-            $niveles = Nivele::where('eliminado', '=', 0)->get();
-            $subniveles = Subnivele::where('eliminado', '=', 0)->get();
-            $categorias = Categoria::where('eliminado', '=', 0)->get();
-            $modalidades = Modalidade::where('eliminado', '=', 0)->get();
-            $cursos = Curso::where('eliminado', '=', 0)->get();
-            $sedes = Sede::where('eliminado', '=', 0)->get();
-            $turnos = Turno::where('eliminado', '=', 0)->get();
-            $selectHorarios = "SELECT CONCAT(inicio, ' - ', fin) as nombre, id FROM horarios WHERE eliminado = 0";
-            $horarios = DB::select($selectHorarios, array());
-            $sucursales = Sucursale::where('eliminado', '=', 0)->get();
-            $sedessucursales = Sedesucursale::where('eliminado', '=', 0)->get();
-            $grupos = Grupo::join('altacursos', 'idAltaCurso', '=', 'altacursos.id')->
-            join('calendarios', 'altacursos.idCalendario', '=', 'calendarios.id')->
-            join('cursos', 'altacursos.idCurso', '=', 'cursos.id')->
-            select(
-                'grupos.id as id',
-                'altacursos.idCalendario',
-                'altacursos.idNivel',
-                'altacursos.idSubnivel',
-                'altacursos.idCategoria',
-                'altacursos.idModalidad',
-                'altacursos.idSede',
-                'altacursos.idCurso',
-                'altacursos.inicio',
-                'altacursos.fin',
-                'altacursos.limitePago',
-                'altacursos.precio',
-                'cursos.nombre as curso',
-                'grupos.idHorario', 
-                'grupos.idTurno')->
-            where('calendarios.fin', '>', $hoy)->get();
-            $estados = Estado::where('eliminado', '=', 0)->get();
-            $municipios = Municipio::where('eliminado', '=', 0)->get();
-            $tipoEscuelas = Tipoescuela::where('eliminado', '=', 0)->get();
-            $escuelas = Escuela::where('eliminado', '=', 0)->get();
-            $universidades = Universidade::where('eliminado', '=', 0)->get();
-            $centrosUniversitarios = Centrosuniversitario::where('eliminado', '=', 0)->get();
-            $carreras = Carrera::join('calendarios', 'idCalendario', '=', 'calendarios.id')->
-            select('carreras.*')->
-            where('calendarios.fin', '>', $hoy)->
-            where('carreras.eliminado', '=', 0)->get();
-            $mediosContacto = Medioscontacto::where('eliminado', '=', 0)->get();
-            $mediosPublicitarios = Mediospublicitario::where('eliminado', '=', 0)->get();
-            $viasPublicitarias = Viaspublicitaria::where('eliminado', '=', 0)->get();
-            $motivosInscripcion = Motivosinscripcione::where('eliminado', '=', 0)->get();
-            $motivosBachillerato = Motivosbachillerato::where('eliminado', '=', 0)->get();
-            $campanias = Campania::where('eliminado', '=', 0)->get();
-            $empresasCursos = Empresascurso::where('eliminado', '=', 0)->get();
-            $metodosPago = Metodospago::where('eliminado', '=', 0)->get();
-            $formasPago = Formaspago::where('eliminado', '=', 0)->get();
-            $bancos = Banco::where('eliminado', '=', 0)->get();
-            $cuentas = Cuenta::where('eliminado', '=', 0)->get();
-            $conceptosAbonos = Conceptosabono::where('eliminado', '=', 0)->get();
-            $conceptosCargos = Conceptoscargo::where('eliminado', '=', 0)->get();
-            $conceptosDescuentos = Conceptosdescuento::where('eliminado', '=', 0)->get();
-            $tiposPago = Tipopago::where('eliminado', '=', 0)->get();
-
-            $listas['sexos'] = $sexos;
-            $listas['calendarios'] = $calendarios;
-            $listas['niveles'] = $niveles;
-            $listas['subniveles'] = $subniveles;
-            $listas['categorias'] = $categorias;
-            $listas['modalidades'] = $modalidades;
-            $listas['cursos'] = $cursos;
-            $listas['sedes'] = $sedes;
-            $listas['turnos'] = $turnos;
-            $listas['horarios'] = $horarios;
-            $listas['sucursales'] = $sucursales;
-            $listas['sedesucursales'] = $sedessucursales;
-            $listas['grupos'] = $grupos;
-            $listas['estados'] = $estados;
-            $listas['municipios'] = $municipios;
-            $listas['escuelas'] = $escuelas;
-            $listas['tipoEscuelas'] = $tipoEscuelas;
-            $listas['universidades'] = $universidades;
-            $listas['centrosUniversitarios'] = $centrosUniversitarios;
-            $listas['carreras'] = $carreras;
-            $listas['mediosContacto'] = $mediosContacto;
-            $listas['mediosPublicitarios'] = $mediosPublicitarios;
-            $listas['viasPublicitarias'] = $viasPublicitarias;
-            $listas['motivosInscripcion'] = $motivosInscripcion;
-            $listas['motivosBachillerato'] = $motivosBachillerato;
-            $listas['campanias'] = $campanias;
-            $listas['empresasCursos'] = $empresasCursos;
-            $listas['metodosPago'] = $metodosPago;
-            $listas['formasPago'] = $formasPago;
-            $listas['bancos'] = $bancos;
-            $listas['cuentas'] = $cuentas;
-            $listas['conceptosAbonos'] = $conceptosAbonos;
-            $listas['conceptosCargos'] = $conceptosCargos;
-            $listas['conceptosDescuentos'] = $conceptosDescuentos;
-            $listas['tiposPago'] = $tiposPago;
-            $listas['convenios'] = Empresaconvenio::where('eliminado', '=', 0)->where('activo', '=', 1)->get();
-
-            $respuesta['listas'] = $listas;
-            $respuesta['prospecto'] = $prospecto;
-            $respuesta['seguimiento'] = $seguimiento;
-            $respuesta['descripciones'] = $lista;
-            return response()->json($respuesta, 200);
+            $funciones = new Inscripciones();
+            return response()->json(
+                array(
+                    'fichas' => $funciones->fichas($request['calendarioID'], $request['sucursalID']),
+                    'grupos' => $funciones->grupos(),
+                    'listas' => array(
+                        'alumnos' => $funciones->listasAlumnos(),
+                        'inscripcion' => $funciones->listasInscripcion(),
+                        'domicilio' => $funciones->listasDomicilio(),
+                        'escolares' => $funciones->listasEscolares(),
+                        'publicitarios' => $funciones->listasPublicitarios(),
+                        'cuenta' => $funciones->listasCuenta()
+                    ),
+                    'cupos' => $funciones->cupos(),
+                    'codigos' => $funciones->codigos(),
+                    'prospecto' => $prospecto,
+                    'seguimiento' => $seguimiento,
+                    'descripciones' => $lista
+                )
+            , 200);
         } catch (Exception $e) {
             return response()->json('Error en el servidor', 400);
         }

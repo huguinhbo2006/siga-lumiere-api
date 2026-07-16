@@ -92,7 +92,7 @@
 						);
 					}
 				}
-				$listas = Listas::listas(['niveles', 'calendarios', 'actuales', 'departamentos', 'puestos', 'empleados', 'conceptosdeducciones', 'conceptospercepciones', 'sucursales', 'formaspagos']);
+				$listas = Listas::listas(['niveles', 'calendarios', 'actuales', 'departamentos', 'puestos', 'empleados', 'conceptosdeducciones', 'conceptospercepciones', 'sucursales', 'formaspagos', 'percepciones', 'deducciones']);
 				$listas['nominas'] = $percepciones;
 				return $listas;
 			} catch (Exception $e) {
