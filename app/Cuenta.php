@@ -68,8 +68,6 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
             ->where('eliminado', 0)
             ->where('activo', 1)
             ->where('idCalendario', '>=', 26)
-            ->where('referencia', '<', 100)
-            ->where('referencia', '<>', 4)
             ->sum('monto');
     }
 
@@ -85,8 +83,6 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
             ->where('eliminado', 0)
             ->where('activo', 1)
             ->where('idCalendario', '>=', 26)
-            ->where('referencia', '<', 100)
-            ->where('referencia', '<>', 4)
             ->sum('monto');
     }
 
