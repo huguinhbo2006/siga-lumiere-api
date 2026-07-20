@@ -29,7 +29,9 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
         'totalIngresos',
         'totalEgresos',
         'totalFinal',
-        'positivo'
+        'positivo',
+        'lista_ingresos',
+        'lista_egresos'
     ];
 
     protected $calendarioActual = null;
@@ -84,6 +86,38 @@ class Cuenta extends Model implements AuthenticatableContract, AuthorizableContr
             ->where('activo', 1)
             ->where('idCalendario', '>=', 26)
             ->sum('monto');
+    }
+
+    public function getListaIngresosAttribute()
+    {
+        $calendario = $this->obtenerCalendario();
+
+        if (!$calendario) {
+            return [];
+        }
+
+        return Ingreso::select('id', 'folio', 'monto', 'concepto')
+            ->where('idCuenta', $this->id)
+            ->where('eliminado', 0)
+            ->where('activo', 1)
+            ->where('idCalendario', '>=', 26)
+            ->get();
+    }
+
+    public function getListaEgresosAttribute()
+    {
+        $calendario = $this->obtenerCalendario();
+
+        if (!$calendario) {
+            return [];
+        }
+
+        return Egreso::select('id', 'folio', 'monto', 'concepto')
+            ->where('idCuenta', $this->id)
+            ->where('eliminado', 0)
+            ->where('activo', 1)
+            ->where('idCalendario', '>=', 26)
+            ->get();
     }
 
     public function getTotalFinalAttribute()

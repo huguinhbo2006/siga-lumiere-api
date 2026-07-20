@@ -74,7 +74,7 @@ class PagesController extends Controller
 
         $hoy = Carbon::today();
 
-        return Altacurso::query()
+        $cursos = Altacurso::query()
             ->join('calendarios','altacursos.idCalendario','=','calendarios.id')
             ->join('cursos','altacursos.idCurso','=','cursos.id')
             ->join('modalidades','altacursos.idModalidad','=','modalidades.id')
@@ -95,6 +95,29 @@ class PagesController extends Controller
                 'modalidades.nombre as modalidad_nombre'
             ])
             ->get();
+
+        foreach ($cursos as $curso) {
+            $grupos = \App\Grupo::join('horarios', 'grupos.idHorario', '=', 'horarios.id')
+                ->leftJoin('turnos', 'grupos.idTurno', '=', 'turnos.id')
+                ->select([
+                    'turnos.nombre as turno',
+                    'horarios.inicio',
+                    'horarios.fin'
+                ])
+                ->where('grupos.idAltaCurso', $curso->id)
+                ->where('grupos.eliminado', 0)
+                ->where('grupos.activo', 1)
+                ->get();
+
+            $horarios = [];
+            foreach ($grupos as $grupo) {
+                $turnoStr = $grupo->turno ? ($grupo->turno . ': ') : '';
+                $horarios[] = $turnoStr . $grupo->inicio . ' - ' . $grupo->fin;
+            }
+            $curso->horarios = $horarios;
+        }
+
+        return $cursos;
     }
 
     /* ============================= */
