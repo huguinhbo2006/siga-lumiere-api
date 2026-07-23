@@ -190,7 +190,6 @@ class AlumnosController extends BaseController
             $datosInscripcion = $request['inscripcion'];
             $datosInscripcion['idAlumno'] = $request['idAlumno'];
             $datosInscripcion['intentos'] = $request['escolares']['intentos'];
-            $datosInscripcion['idSucursalInscripcion'] = $request['sucursalID'];
             $datosInscripcion['idUsuario'] = $request['usuarioID'];
             $datosInscripcion['idUsuarioInformacion'] = $request['usuarioID'];
             $respuesta['ficha'] = $funciones->nuevaFicha($datosInscripcion);
